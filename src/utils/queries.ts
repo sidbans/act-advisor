@@ -1,9 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  fetchAllUserRatings,
-  fetchAverageRatings,
-  fetchRatingsPage,
-} from "./supabase";
+import { fetchAverageRatings, fetchRatingsPage } from "./supabase";
 
 export const useUserRatingsPage = (
   userId: string | undefined,
@@ -16,24 +12,6 @@ export const useUserRatingsPage = (
   return useQuery({
     queryKey: ["ratings-page", userId, page],
     queryFn: () => fetchRatingsPage(userId, page),
-  });
-};
-
-export const useUserRatings = (
-  userId: string | undefined,
-  timePeriod: "last_week" | "last_month" | "all",
-) => {
-  if (!userId) {
-    throw new Error("User ID is required to fetch ratings");
-  }
-
-  return useQuery({
-    queryKey: ["ratings", userId, timePeriod],
-    queryFn: () => fetchAllUserRatings(userId, timePeriod),
-    staleTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
   });
 };
 

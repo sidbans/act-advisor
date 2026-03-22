@@ -1,39 +1,27 @@
 import { useAuth } from "../contexts/AuthContext";
 import { Modal } from "./Modal";
 import { useState } from "react";
-import { LeftPanel } from "./LeftPanel";
-import { RightPanel } from "./RightPanel";
+import { useAverageRatings, useUserRatingsPage } from "../utils/queries";
+import { Greeting } from "./Greeting";
+import { RadarComponent } from "./Radar";
+import { Table } from "./Table";
 
 export const Dashboard = () => {
   const auth = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const { data: pageData } = useUserRatingsPage(auth.user?.id, page);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour > 5 && hour < 12) return "Good morning";
-    if (hour >= 12 && hour < 17) return "Good afternoon";
-    return "Good evening";
-  };
+  const { data: averageRatings } = useAverageRatings(auth.user?.id);
 
   return (
-    <div className="grid grid-rows-[auto_1fr] h-full">
-      <div id="greeting" className="w-full text-center text-2xl">
-        <div className="font-extrabold p-10">
-          {getGreeting()}, you are logged in as {auth.user?.email}.
-        </div>
-        <div>
-          <button
-            className="btn btn-primary"
-            onClick={() => setModalOpen(true)}
-          >
-            Add new rating
-          </button>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 h-full mt-10 mx-50">
-        <LeftPanel />
-        <RightPanel />
-      </div>
+    <div>
+      <Greeting setModalOpen={setModalOpen} />
+      <RadarComponent
+        averageRatings={averageRatings || []}
+        pageDataTotalCount={pageData?.totalCount}
+      />
+      <Table pageData={pageData} page={page} setPage={setPage} />
       {modalOpen && <Modal setModalOpen={setModalOpen} />}
     </div>
   );

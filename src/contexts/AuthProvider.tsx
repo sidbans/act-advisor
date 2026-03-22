@@ -35,17 +35,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (loginError) {
-      const { data: signupData, error: signupError } =
-        await supabase.auth.signUp({
-          email,
-          password,
-        });
+      // Try to sign up if login failed
+      const { data: signupData } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
       if (signupData.user) {
         return { message: "Check your email for a confirmation link." };
       }
 
-      return { message: signupError?.message ?? "Signup failed" };
+      // If signup also failed, return the login error message
+      return { message: loginError.message };
     }
 
     return { message: "Authentication failed" };

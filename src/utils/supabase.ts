@@ -3,9 +3,7 @@ import {
   ratingKeys,
   ratingMetadata,
   type RatingAverages,
-  type RatingKey,
 } from "../models/Ratings";
-import type { LineSeries } from "@nivo/line";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -41,82 +39,6 @@ export const fetchUserRatingCount = async (userId: string): Promise<number> => {
   if (error) throw error;
 
   return count ?? 0;
-};
-
-type InputRow = { date: string } & Record<RatingKey, number>;
-export const toLineSeries: (data: InputRow[]) => LineSeries[] = (data) =>
-  ratingKeys.map((key) => ({
-    id: ratingMetadata.find((x) => x.id === key)?.label,
-    data: data.map((row) => ({
-      x: row.date,
-      y: row[key],
-    })),
-  })) as LineSeries[];
-
-const toDate = (iso: string) => iso.slice(0, 10);
-
-export const fetchAllUserRatings = async (
-  userId: string,
-  timePeriod: "last_week" | "last_month" | "all",
-): Promise<InputRow[]> => {
-  let query = supabase
-    .from("rating")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: true });
-
-  if (timePeriod === "last_week") {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    query = query.gte("created_at", sevenDaysAgo.toISOString());
-  } else if (timePeriod === "last_month") {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    query = query.gte("created_at", thirtyDaysAgo.toISOString());
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    throw error;
-  }
-
-  type Buckets = Record<string, Record<RatingKey, number[]>>; // date : { ratingKey: [scores...] }
-  const buckets = {} as Buckets;
-
-  data.forEach((row) => {
-    const day = toDate(row.created_at);
-
-    if (!buckets[day]) {
-      buckets[day] = {
-        present_moment: [],
-        values: [],
-        committed_action: [],
-        self_context: [],
-        defusion: [],
-        acceptance: [],
-      };
-    }
-
-    ratingKeys.forEach((key) => buckets[day][key].push(row[key]));
-  });
-
-  return (
-    Object.entries(buckets)
-      .map(([date, values]) => {
-        const avg = {} as Record<RatingKey, number>;
-
-        ratingKeys.forEach((key) => {
-          const nums = values[key];
-          avg[key] = Number(
-            (nums.reduce((a, b) => a + b, 0) / nums.length).toFixed(2),
-          );
-        });
-
-        return { date, ...avg };
-      })
-      .sort((a, b) => a.date.localeCompare(b.date)) ?? []
-  );
 };
 
 export const fetchAverageRatings = async (userId: string) => {
