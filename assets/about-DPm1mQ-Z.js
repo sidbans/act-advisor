@@ -1,0 +1,1 @@
+import{u as e}from"./index-BxrbBmT0.js";var t=e();function n(){return(0,t.jsx)(`div`,{children:`About`})}export{n as component};
