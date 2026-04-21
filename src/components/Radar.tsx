@@ -23,8 +23,8 @@ export const RadarComponent = ({
   const theme = chartTheme(isDarkMode);
 
   return (
-    <div id="spider-graph" className="text-center h-74 md:h-100 px-4">
-      <div className="text-sm md:text-xl mb-2">
+    <div id="spider-graph" className="text-center h-64 sm:h-74 md:h-96 lg:h-100 px-4 mb-4">
+      <div className="text-xs sm:text-sm md:text-xl mb-2">
         Your average scores over {pageDataTotalCount} entries
       </div>
       <ResponsiveContainer width="100%" height="100%">

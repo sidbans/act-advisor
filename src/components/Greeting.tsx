@@ -1,12 +1,8 @@
-import { useAuth } from "../contexts/AuthContext";
-
 interface GreetingProps {
   setModalOpen: (open: boolean) => void;
 }
 
 export const Greeting = ({ setModalOpen }: GreetingProps) => {
-  const auth = useAuth();
-
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour > 5 && hour < 12) return "Good morning";
@@ -15,9 +11,9 @@ export const Greeting = ({ setModalOpen }: GreetingProps) => {
   };
 
   return (
-    <div id="greeting" className="w-full text-center p-5">
-      <div className="font-bold text-md md:text-2xl p-5">
-        {getGreeting()}, you are logged in as {auth.user?.email}.
+    <div id="greeting" className="w-full text-center p-3 sm:p-4 md:p-5">
+      <div className="font-bold text-sm sm:text-base md:text-xl lg:text-2xl p-3 sm:p-4 md:p-5 break-words">
+        {getGreeting()}! How are you feeling?
       </div>
       <button
         className="btn btn-sm md:btn-md btn-primary"

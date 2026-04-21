@@ -1,28 +1,17 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchAverageRatings, fetchRatingsPage } from "./supabase";
+import { fetchAverageRatings, fetchRatingsPage } from "./db";
 
-export const useUserRatingsPage = (
-  userId: string | undefined,
-  page: number,
-) => {
-  if (!userId) {
-    throw new Error("User ID is required to fetch ratings");
-  }
-
+export const useRatingsPage = (page: number) => {
   return useQuery({
-    queryKey: ["ratings-page", userId, page],
-    queryFn: () => fetchRatingsPage(userId, page),
+    queryKey: ["ratings-page", page],
+    queryFn: () => fetchRatingsPage(page),
   });
 };
 
-export const useAverageRatings = (userId: string | undefined) => {
-  if (!userId) {
-    throw new Error("User ID is required to fetch average ratings");
-  }
-
+export const useAverageRatings = () => {
   return useQuery({
-    queryKey: ["average-ratings", userId],
-    queryFn: () => fetchAverageRatings(userId),
+    queryKey: ["average-ratings"],
+    queryFn: () => fetchAverageRatings(),
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

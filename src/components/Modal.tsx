@@ -5,7 +5,7 @@ import {
   type RatingsData,
 } from "../models/Ratings";
 import { RatingSlider } from "./RatingSlider";
-import { supabase } from "../utils/supabase";
+import { addRating } from "../utils/db";
 import { useRefreshQueries } from "../utils/queries";
 
 export const Modal = ({
@@ -20,32 +20,24 @@ export const Modal = ({
   const refresh = useRefreshQueries();
 
   const handleAdd = async () => {
-    const { error } = await supabase.from("rating").insert([
-      {
-        ...ratingsData,
-      },
-    ]);
-
-    if (error) {
-      console.error("Error adding rating:", error);
-    }
-
+    await addRating(ratingsData);
     refresh();
   };
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box w-10/12 max-w-5xl">
-        <h3 className="font-bold text-lg">How do you feel right now?</h3>
-        <p className="py-4">
+      <div className="modal-box w-11/12 sm:w-10/12 max-w-5xl">
+        <h3 className="font-bold text-base md:text-lg">How do you feel right now?</h3>
+        <div className="py-4">
           {ratingKeys.map((ratingId) => (
             <RatingSlider
+              key={ratingId}
               ratingId={ratingId}
               ratingsData={ratingsData}
               setRatingsData={setRatingsData}
             />
           ))}
-        </p>
+        </div>
         <div className="modal-action">
           <button
             className="btn btn-success"

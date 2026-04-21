@@ -25,35 +25,43 @@ export const RatingSlider = ({
     return "range-success";
   };
 
-  return (
-    <div key={ratingId} className="mb-4 p-6 flex items-center">
-      <div className="w-32 italic text-sm text-left wrap-break-word">
-        {rating.minString}
-      </div>
-      <div className="flex-1">
-        <label className="block font-medium mb-1 text-center">
-          {`${rating.label}: ${ratingsData[ratingId]}`}
-        </label>
+  const getValueClass = (value: number): string => {
+    if (value <= 3) return "text-error";
+    if (value <= 6) return "text-warning";
+    return "text-success";
+  };
 
-        <input
-          type="range"
-          min={1}
-          max={10}
-          step={1}
-          value={ratingsData[ratingId]}
-          className={`w-full range range-sm ${getSliderClass(
-            ratingsData[ratingId],
-          )}`}
-          onChange={(e) =>
-            setRatingsData((prev) => ({
-              ...prev,
-              [ratingId]: Number(e.target.value),
-            }))
-          }
-        />
-      </div>
-      <div className="w-32 italic text-sm text-right wrap-break-word">
-        {rating.maxString}
+  return (
+    <div key={ratingId} className="mb-1 px-2 py-1.5">
+      <span className="text-base font-bold truncate block leading-snug">{rating.label}</span>
+      <div className="flex items-center gap-1.5 mt-0.5">
+        <span className="italic text-xs text-base-content/40 shrink-0 w-16 text-right leading-tight">
+          {rating.minString}
+        </span>
+        <div className="flex-1 flex flex-col items-center gap-0.5">
+          <span
+            className={`text-2xl font-black leading-none tabular-nums ${getValueClass(ratingsData[ratingId])}`}
+          >
+            {ratingsData[ratingId]}
+          </span>
+          <input
+            type="range"
+            min={1}
+            max={10}
+            step={1}
+            value={ratingsData[ratingId]}
+            className={`w-full range range-xs ${getSliderClass(ratingsData[ratingId])}`}
+            onChange={(e) =>
+              setRatingsData((prev) => ({
+                ...prev,
+                [ratingId]: Number(e.target.value),
+              }))
+            }
+          />
+        </div>
+        <span className="italic text-xs text-base-content/40 shrink-0 w-16 leading-tight">
+          {rating.maxString}
+        </span>
       </div>
     </div>
   );
